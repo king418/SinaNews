@@ -1,6 +1,7 @@
 package com.king.utils;
 
 import com.king.model.DownNews;
+import com.king.model.ImageNews;
 import com.king.model.Title;
 import com.king.model.TopNews;
 import org.json.JSONArray;
@@ -38,30 +39,30 @@ public class JsonUtils {
         List<Object> downNewses = new ArrayList<Object>();
         try {
             JSONObject obj = new JSONObject(jsonStr);
-            JSONObject data = obj.getJSONObject("data");
-            JSONArray arrTop_news = data.getJSONArray("top_news");
+            JSONObject data = obj.optJSONObject("data");
+            JSONArray arrTop_news = data.optJSONArray("top_news");
             int length = arrTop_news.length();
             for (int i = 0; i < length; i++) {
-                JSONObject objTopNews = arrTop_news.getJSONObject(i);
+                JSONObject objTopNews = arrTop_news.optJSONObject(i);
                 TopNews topNews = new TopNews();
-                topNews.setId(objTopNews.getString("id"));
-                topNews.setTitle(objTopNews.getString("title"));
-                topNews.setCover_pic(objTopNews.getString("cover_pic"));
+                topNews.setId(objTopNews.optString("id"));
+                topNews.setTitle(objTopNews.optString("title"));
+                topNews.setCover_pic(objTopNews.optString("cover_pic"));
                 topNewses.add(topNews);
             }
             map.put("top_news", topNewses);
-            JSONArray arrDown_news = data.getJSONArray("down_news");
+            JSONArray arrDown_news = data.optJSONArray("down_news");
             int length1 = arrDown_news.length();
             for (int i = 0; i < length1; i++) {
-                JSONObject objDownnews = arrDown_news.getJSONObject(i);
+                JSONObject objDownnews = arrDown_news.optJSONObject(i);
                 DownNews downNews = new DownNews();
-                downNews.setId(objDownnews.getString("id"));
-                downNews.setCover_pic(objDownnews.getString("cover_pic"));
-                downNews.setCreate_time(objDownnews.getString("create_time"));
-                downNews.setContent(objDownnews.getString("content"));
-                downNews.setDescript(objDownnews.getString("descript"));
-                downNews.setTitle(objDownnews.getString("title"));
-                downNews.setContent(objDownnews.getString("comment_total"));
+                downNews.setId(objDownnews.optString("id"));
+                downNews.setCover_pic(objDownnews.optString("cover_pic"));
+                downNews.setCreate_time(objDownnews.optString("create_time"));
+                downNews.setContent(objDownnews.optString("content"));
+                downNews.setDescript(objDownnews.optString("descript"));
+                downNews.setTitle(objDownnews.optString("title"));
+                downNews.setComment_total(objDownnews.optString("comment_total"));
                 downNewses.add(downNews);
             }
             map.put("down_news", downNewses);
@@ -69,6 +70,41 @@ public class JsonUtils {
             e.printStackTrace();
         }
         return map;
+    }
+
+    public static List<ImageNews> parseImageNews(String jsonStr) {
+        List<ImageNews> list = new ArrayList<ImageNews>();
+        try {
+            JSONObject obj = new JSONObject(jsonStr);
+            JSONArray datas = obj.getJSONArray("data");
+            int length = datas.length();
+            for (int i = 0; i < length; i++) {
+                JSONObject objData = datas.getJSONObject(i);
+                ImageNews imageNews = new ImageNews();
+                imageNews.setId(objData.optString("id"));
+                imageNews.setTitle(objData.optString("title"));
+                imageNews.setContent(objData.optString("content"));
+                imageNews.setPic_total(objData.optString("pic_total"));
+                imageNews.setDescript(objData.optString("descript"));
+                JSONArray pic_lists = objData.optJSONArray("pic_list");
+                if (pic_lists!=null){
+                    List<String> strings = new ArrayList<String>();
+                    int length1 = pic_lists.length();
+                    for (int j = 0; j < length1; j++) {
+                        String s = pic_lists.optString(j);
+                        strings.add(s);
+                    }
+                    imageNews.setPic_list(strings);
+                }
+
+                list.add(imageNews);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
 }

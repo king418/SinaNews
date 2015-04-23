@@ -1,8 +1,12 @@
 package com.king.SinaNews;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -13,6 +17,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.king.Fragment.NewsFragment;
 import com.king.app.AppContext;
 import com.king.configuration.Constants;
 import com.king.model.Title;
@@ -20,7 +25,7 @@ import com.king.utils.JsonUtils;
 
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity implements NewsFragment.OnViewPagerChangeListener {
     /**
      * Called when the activity is first created.
      */
@@ -48,12 +53,14 @@ public class MainActivity extends Activity {
     private int currentFragment;
     private RequestQueue requestQueue;
     private List<Title> title_list;
+    private NewsFragment newsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         initData();
+
         initView();
         initListener();
 
@@ -65,9 +72,14 @@ public class MainActivity extends Activity {
         scrollView = (HorizontalScrollView) findViewById(R.id.scrollView);
         title_container = (LinearLayout) findViewById(R.id.title_container);
         title_navigat = (LinearLayout) findViewById(R.id.title_nagivation);
+        repleaceFragment(10,0);
         setTitle();
+
     }
 
+    /**
+     * 设置下方导航条的单击
+     */
     private void initListener() {
         final int childCount = tab_main.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -81,6 +93,8 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     currentFragment = index;
                     title_container.removeAllViews();
+                  //  Log.i("NewsFragment","-------->position:　"+currentFragment);
+                    repleaceFragment(title_navigation.length, currentFragment);
                     setTitle();
                     setStateDisEnable(tab);
                     for (int j = 0; j < childCount; j++) {
@@ -97,6 +111,7 @@ public class MainActivity extends Activity {
     private void initData() {
         title_type = new String[]{Constants.NAVIGATION_TYPE_TEXT, Constants.NAVIGATION_TYPE_PICTURE, Constants.NAVIGATION_TYPE_VIDEO};
         requestQueue = AppContext.getInstance().getRequestQueue();
+        newsFragment = new NewsFragment();
     }
 
     /**
@@ -172,15 +187,9 @@ public class MainActivity extends Activity {
                 title_navigation[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        scrollView.scrollTo(index * 60, 0);
-                        title_navigation[index].setBackgroundResource(R.drawable.title_background);
-                        title_navigation[index].setTextColor(Color.rgb(0xF5, 0X4B, 0X4C));
-                        for (int j = 0; j < length; j++) {
-                            if (j != index) {
-                                title_navigation[j].setBackgroundColor(Color.argb(0, 0, 0, 0));
-                                title_navigation[j].setTextColor(Color.BLACK);
-                            }
-                        }
+
+                        setTitleAt(index);
+                        newsFragment.viewPager.setCurrentItem(index);
                     }
                 });
                 title_container.addView(textView);
@@ -190,4 +199,35 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void setTitleAt(int position) {
+        scrollView.scrollTo(position * 60, 0);
+        title_navigation[position].setBackgroundResource(R.drawable.title_background);
+        title_navigation[position].setTextColor(Color.rgb(0xF5, 0X4B, 0X4C));
+        int length = title_navigation.length;
+        for (int j = 0; j < length; j++) {
+            if (j != position) {
+                title_navigation[j].setBackgroundColor(Color.argb(0, 0, 0, 0));
+                title_navigation[j].setTextColor(Color.BLACK);
+            }
+        }
+    }
+
+    private void repleaceFragment(int size, int currentFragment) {
+         newsFragment = new NewsFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putInt("size", size);
+        bundle.putInt("position", currentFragment);
+
+        newsFragment.setArguments(bundle);
+        transaction.replace(R.id.layout_container, newsFragment);
+        transaction.commit();
+    }
+
+
+    @Override
+    public void onViewPagerChangeListener(int currentPage) {
+        setTitleAt(currentPage);
+    }
 }
