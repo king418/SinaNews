@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,13 +67,23 @@ public class NewsFragment extends Fragment {
         Bundle bundle = getArguments();
         int size = bundle.getInt("size");
         int position = bundle.getInt("position");
-
+        // Log.i("NewsLOGFragment", "-------->news_type_id:　" + size);
         for (int i = 0; i < size; i++) {
             NewsListFragment fragment = new NewsListFragment();
             Bundle bundles = new Bundle();
             bundles.putInt("type", position);
-           // Log.i("NewsLOGFragment", "-------->news_type_id:　" + position);
-            bundles.putString("cate_id", (i + 1) + "");
+            // Log.i("NewsLOGFragment", "-------->news_type_id:　" + position);
+            switch (position) {
+                case 0:
+                    bundles.putString("cate_id", (i + 1) + "");
+                    break;
+                case 1:
+                    bundles.putString("cate_id", (i + 11) + "");
+                    break;
+                case 2:
+                    bundles.putString("cate_id", (i + 15) + "");
+                    break;
+            }
             fragment.setArguments(bundles);
             list.add(fragment);
         }

@@ -1,6 +1,7 @@
 package com.king.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.List;
  */
 public class NewsListAdapter extends BaseAdapter {
 
+    private final AppContext appContext;
     private Context context;
     private List<Object> list;
     private LayoutInflater inflater;
@@ -27,7 +29,8 @@ public class NewsListAdapter extends BaseAdapter {
     public NewsListAdapter(Context context, List<Object> list) {
         this.context = context;
         this.list = list;
-        inflater = LayoutInflater.from(AppContext.getInstance());
+        appContext = AppContext.getInstance();
+        inflater = LayoutInflater.from(appContext);
     }
 
     @Override
@@ -63,8 +66,11 @@ public class NewsListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.img = (NetworkImageView) ret.findViewById(R.id.item_img);
             viewHolder.tv_title = (TextView) ret.findViewById(R.id.tv_title);
+            viewHolder.tv_title.setTextColor(Color.BLACK);
             viewHolder.tv_content = (TextView) ret.findViewById(R.id.tv_content);
+            viewHolder.tv_content.setTextColor(Color.rgb(88,88,88));
             viewHolder.tv_comment_total = (TextView) ret.findViewById(R.id.tv_comment_total);
+            viewHolder.tv_comment_total.setTextColor(Color.rgb(88,88,88));
             ret.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) ret.getTag();

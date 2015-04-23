@@ -1,10 +1,9 @@
 package com.king.Fragment;
 
-import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +15,18 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.king.SinaNews.R;
+import com.king.SinaNews.TextNewsContentActivity;
 import com.king.adapter.HeadPagerAdapter;
 import com.king.adapter.ImageNewsAdapter;
 import com.king.adapter.NewsListAdapter;
+import com.king.adapter.VieoNewsAdapter;
 import com.king.app.AppContext;
 import com.king.configuration.Constants;
 import com.king.model.ImageNews;
 import com.king.model.TopNews;
+import com.king.model.VideoNews;
+import com.king.pulltorefresh.PullToRefreshBase;
+import com.king.pulltorefresh.PullToRefreshListView;
 import com.king.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -47,11 +51,19 @@ public class NewsListFragment extends Fragment {
     private List<View> imgList;
     private ImageView[] imgs;
     private int news_type_id;
+    private PullToRefreshListView refreshListView;
+    private int currentPage = 1;
+
+    private List<ImageNews> imageList;
+    private List<VideoNews> videoList;
+    private NewsListAdapter newsListAdapter;
+    private ImageNewsAdapter imageNewsAdapter;
+    private VieoNewsAdapter vieoNewsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = initUrl();
+
         requestQueue = AppContext.getInstance().getRequestQueue();
         imageLoader = AppContext.getInstance().getImageLoader();
     }
@@ -60,11 +72,13 @@ public class NewsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_newslist, container, false);
-        list_news = (ListView) view.findViewById(R.id.list_content);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.empty);
-        list_news.setEmptyView(progressBar);
-
-        setListView(url);
+        refreshListView = (PullToRefreshListView) view.findViewById(R.id.list_content);
+        list_news = refreshListView.getRefreshableView();
+        url = initUrl();
+        LinearLayout empty = (LinearLayout) view.findViewById(R.id.empty);
+        list_news.setEmptyView(empty);
+        addRefreshListener();
+        setListView(url + currentPage);
         return view;
     }
 
@@ -73,20 +87,20 @@ public class NewsListFragment extends Fragment {
         StringRequest request = new StringRequest(urlStr, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-               // Log.i("NewsLOGFragment", "-------->news_type_id:　" + news_type_id);
+                // Log.i("NewsLOGFragment", "-------->news_type_id:　" + news_type_id);
                 switch (news_type_id) {
 
                     case 0:
-                        setTextListView(response);
+                        reloadTextListView(response);
                         break;
                     case 1:
-                        setImageLisetView(response);
+                        reloadImageListView(response);
                         break;
-                    case 3:
-
+                    case 2:
+                        reloadVideoListView(response);
                         break;
                 }
-
+                refreshListView.onRefreshComplete();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -97,6 +111,25 @@ public class NewsListFragment extends Fragment {
         requestQueue.add(request);
     }
 
+    ///////////////////////////设置下拉刷新//////////////////////////////////////
+    private void addRefreshListener() {
+        refreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                currentPage = 1;
+                setListView(url + currentPage);
+            }
+        });
+        refreshListView.setOnLastItemVisibleListener(new PullToRefreshBase.OnLastItemVisibleListener() {
+            @Override
+            public void onLastItemVisible() {
+                currentPage++;
+                setListView(url + currentPage);
+            }
+        });
+    }
+
+    ///////////////////////////设置listView头视图//////////////////////////////////
     private void initHead() {
         headView = LayoutInflater.from(AppContext.getInstance()).inflate(R.layout.head_viewpager, null);
         headImg = (ViewPager) headView.findViewById(R.id.head_viewpager);
@@ -193,6 +226,7 @@ public class NewsListFragment extends Fragment {
         headTitle.setText(topNews.getTitle());
     }
 
+    ////////////////////////////////////////////////////////
     private String initUrl() {
         String ret = "";
         Bundle bundle = getArguments();
@@ -200,13 +234,16 @@ public class NewsListFragment extends Fragment {
         news_type_id = bundle.getInt("type");
         switch (news_type_id) {
             case 0:
-                ret = Constants.NEWS_LIST + cate_id;
+                ret = Constants.NEWS_LIST + cate_id + "&p=";
+                setTextListView();
                 break;
             case 1:
-                ret = Constants.PIC_NEWS_LIST + cate_id;
+                ret = Constants.PIC_NEWS_LIST + cate_id + "&p=";
+                setImageLisetView();
                 break;
-            case 3:
-                ret = Constants.VIDEO_NEWS_LIST + cate_id;
+            case 2:
+                ret = Constants.VIDEO_NEWS_LIST + cate_id + "&p=";
+                setVideoListView();
                 break;
         }
         return ret;
@@ -215,29 +252,79 @@ public class NewsListFragment extends Fragment {
     /**
      * 加载普通新闻
      *
-     * @param jsonStr
      */
-    private void setTextListView(String jsonStr) {
-        Map<String, List<Object>> map = JsonUtils.parseTextNews(jsonStr);
-        downNewses = map.get("down_news");
-        topNewses = map.get("top_news");
-        if (topNewses != null && topNewses.size() != 0) {
-            initHead();
-            list_news.addHeaderView(headView);
-        }
-        if (list_news != null) {
-            list_news.setAdapter(new NewsListAdapter(getActivity(), downNewses));
-        }
+    private void setTextListView() {
+        downNewses = new ArrayList<Object>();
+        newsListAdapter = new NewsListAdapter(getActivity(), downNewses);
+        list_news.setAdapter(newsListAdapter);
+        list_news.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), TextNewsContentActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
      * 加载图片新闻列表页面
      *
-     * @param jsonStr
      */
-    private void setImageLisetView(String jsonStr) {
+    private void setImageLisetView() {
+        //Log.i("NewsList", "---------->" + imageNewses.size());
+        imageList = new ArrayList<ImageNews>();
+        imageNewsAdapter = new ImageNewsAdapter(AppContext.getInstance(), imageList);
+        list_news.setAdapter(imageNewsAdapter);
+        list_news.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+    }
+
+    /**
+     * 加载VideoNews   ListView
+     *
+     *
+     */
+    private void setVideoListView() {
+        videoList = new ArrayList<VideoNews>();
+        vieoNewsAdapter = new VieoNewsAdapter(videoList);
+        list_news.setAdapter(vieoNewsAdapter);
+    }
+
+    private void reloadTextListView(String jsonStr) {
+        Map<String, List<Object>> map = JsonUtils.parseTextNews(jsonStr);
+        if (currentPage == 1){
+            downNewses.clear();
+            list_news.removeHeaderView(headView);
+            topNewses = map.get("top_news");
+            if (topNewses != null && topNewses.size() != 0) {
+                initHead();
+                list_news.addHeaderView(headView);
+            }
+        }
+        List<Object> down =  map.get("down_news");
+        downNewses.addAll(down);
+        newsListAdapter.notifyDataSetChanged();
+    }
+
+    private void reloadImageListView(String jsonStr){
+        if (currentPage == 1){
+            imageList.clear();
+        }
         List<ImageNews> imageNewses = JsonUtils.parseImageNews(jsonStr);
-        list_news.setAdapter(new ImageNewsAdapter(AppContext.getInstance(), imageNewses));
+        imageList.addAll(imageNewses);
+        imageNewsAdapter.notifyDataSetChanged();
+    }
+    private void reloadVideoListView(String jsonStr){
+        if (currentPage == 1){
+            videoList.clear();
+        }
+        List<VideoNews> videoNewses = JsonUtils.parseVideoNews(jsonStr);
+        videoList.addAll(videoNewses);
+        vieoNewsAdapter.notifyDataSetChanged();
     }
 
 }

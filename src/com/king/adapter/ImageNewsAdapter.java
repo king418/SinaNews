@@ -1,6 +1,7 @@
 package com.king.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,9 @@ public class ImageNewsAdapter extends BaseAdapter {
             holder.image2 = (NetworkImageView) ret.findViewById(R.id.image2);
             holder.image3 = (NetworkImageView) ret.findViewById(R.id.image3);
             holder.imglist_title = (TextView) ret.findViewById(R.id.imglist_title);
+            holder.imglist_title.setTextColor(Color.BLACK);
             holder.imglist_content = (TextView) ret.findViewById(R.id.imglist_content);
+            holder.imglist_content.setTextColor(Color.BLACK);
             holder.img_container = (LinearLayout) ret.findViewById(R.id.imag_container);
             ret.setTag(holder);
         } else {
@@ -91,8 +94,8 @@ public class ImageNewsAdapter extends BaseAdapter {
                 case 2:
                     holder.image1.setVisibility(View.GONE);
                     holder.img_container.setVisibility(View.VISIBLE);
-                    setImage(holder.image2,urls.get(0));
-                    setImage(holder.image3,urls.get(1));
+                    setImage(holder.image2, urls.get(0));
+                    setImage(holder.image3, urls.get(1));
                     break;
                 default:
                     holder.image1.setVisibility(View.VISIBLE);
@@ -103,7 +106,7 @@ public class ImageNewsAdapter extends BaseAdapter {
                     break;
 
             }
-        }else {
+        } else {
             holder.image1.setVisibility(View.GONE);
             holder.img_container.setVisibility(View.GONE);
         }

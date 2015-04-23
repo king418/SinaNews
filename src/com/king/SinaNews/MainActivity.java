@@ -1,12 +1,10 @@
 package com.king.SinaNews;
 
-import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -72,7 +70,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
         scrollView = (HorizontalScrollView) findViewById(R.id.scrollView);
         title_container = (LinearLayout) findViewById(R.id.title_container);
         title_navigat = (LinearLayout) findViewById(R.id.title_nagivation);
-        repleaceFragment(10,0);
+        repleaceFragment(10, 0);
         setTitle();
 
     }
@@ -93,9 +91,9 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
                 public void onClick(View v) {
                     currentFragment = index;
                     title_container.removeAllViews();
-                  //  Log.i("NewsFragment","-------->position:　"+currentFragment);
-                    repleaceFragment(title_navigation.length, currentFragment);
+                    //  Log.i("NewsFragment","-------->position:　"+currentFragment);
                     setTitle();
+
                     setStateDisEnable(tab);
                     for (int j = 0; j < childCount; j++) {
                         if (j != index) {
@@ -153,8 +151,10 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
                 @Override
                 public void onResponse(String response) {
                     if (response != null && !response.equals("")) {
+                        title_container.removeAllViews();
                         title_list = JsonUtils.parseTitleJson(response);
                         initTitle(title_list);
+                        repleaceFragment(title_list.size(), currentFragment);
                     }
                 }
             }, new Response.ErrorListener() {
@@ -171,6 +171,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
 
 
     private void initTitle(List<Title> list) {
+       // Log.i("MainActivity", "------>" + list.size());
         if (list != null) {
             title_navigation = new TextView[list.size()];
             final int length = title_navigation.length;
@@ -213,7 +214,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
     }
 
     private void repleaceFragment(int size, int currentFragment) {
-         newsFragment = new NewsFragment();
+        newsFragment = new NewsFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         Bundle bundle = new Bundle();

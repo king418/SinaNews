@@ -15,8 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_alignParentBottom="true"
-            android:background="#ddd"
-            android:alpha="0.4"
+            android:background="#5888"
             >
 
         <TextView
