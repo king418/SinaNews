@@ -31,4 +31,15 @@ public class Constants {
      */
     public static final String VIDEO_NEWS_LIST =
             "http://1000phone.net:8088/qfapp/index.php/juba/news/get_video_news_list?cate_id=";
+    /**
+     * 文字新闻详细
+     */
+    public static final String NEWS_DETAIL =
+            "http://1000phone.net:8088/qfapp/index.php/juba/news/news_detail?news_id=";
+    /**
+     * 新闻评论
+     */
+    public static final String NEWS_COMMENT =
+            "http://1000phone.net:8088/qfapp/index.php/juba/news/get_comment_list?item_id=";
+
 }

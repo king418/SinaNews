@@ -8,6 +8,7 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             >
 
         <ImageView
@@ -16,6 +17,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:src="@drawable/live_nav_back_1"
+
                 />
 
         <ImageView
@@ -67,15 +69,14 @@
                         android:layout_height="wrap_content"
                         android:textColor="#555"
                         android:textSize="10sp"
-                        android:text="2015-04-23 02:23"
                         />
 
                 <TextView
+                        android:id="@+id/tv_textcontent_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textSize="22sp"
-                        android:text="这是新闻标题"
                         />
 
                 <View
@@ -89,8 +90,8 @@
             <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/img_textcontent_net"
                     android:layout_width="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher"
                     />
 
             <View
@@ -101,11 +102,11 @@
                     />
 
             <TextView
+                    android:id="@+id/tv_textcontent_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="#333"
-                    android:text="这是新闻内容"
                     />
             <TextView
                     android:layout_marginTop="5dp"
@@ -125,6 +126,16 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     />
+            <TextView
+                    android:id="@+id/tv_textcontent_morecommet"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#F00"
+                    android:textSize="22sp"
+                    android:visibility="gone"
+                    android:text="更多热门评论"
+                    />
 
         </LinearLayout>
     </ScrollView>
@@ -139,6 +150,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:hint="我来说两句..."
                 />
 
         <Button

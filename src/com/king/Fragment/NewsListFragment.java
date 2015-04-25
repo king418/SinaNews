@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.king.SinaNews.ImageDetailActivity;
 import com.king.SinaNews.R;
 import com.king.SinaNews.TextNewsContentActivity;
+import com.king.SinaNews.VideoDetailActivity;
 import com.king.adapter.HeadPagerAdapter;
 import com.king.adapter.ImageNewsAdapter;
 import com.king.adapter.NewsListAdapter;
 import com.king.adapter.VieoNewsAdapter;
 import com.king.app.AppContext;
 import com.king.configuration.Constants;
+import com.king.model.DownNews;
 import com.king.model.ImageNews;
 import com.king.model.TopNews;
 import com.king.model.VideoNews;
@@ -251,7 +255,6 @@ public class NewsListFragment extends Fragment {
 
     /**
      * 加载普通新闻
-     *
      */
     private void setTextListView() {
         downNewses = new ArrayList<Object>();
@@ -260,7 +263,12 @@ public class NewsListFragment extends Fragment {
         list_news.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int headerViewsCount = list_news.getHeaderViewsCount();
+                DownNews downNews = (DownNews) downNewses.get(position - headerViewsCount);
                 Intent intent = new Intent(getActivity(), TextNewsContentActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("news_id", downNews.getId());
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -268,7 +276,6 @@ public class NewsListFragment extends Fragment {
 
     /**
      * 加载图片新闻列表页面
-     *
      */
     private void setImageLisetView() {
         //Log.i("NewsList", "---------->" + imageNewses.size());
@@ -278,25 +285,39 @@ public class NewsListFragment extends Fragment {
         list_news.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                ImageNews imageNews = imageList.get(position);
+                Intent intent = new Intent(getActivity(), ImageDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("news_id",imageNews.getId());
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
     }
 
     /**
      * 加载VideoNews   ListView
-     *
-     *
      */
     private void setVideoListView() {
         videoList = new ArrayList<VideoNews>();
         vieoNewsAdapter = new VieoNewsAdapter(videoList);
         list_news.setAdapter(vieoNewsAdapter);
+        list_news.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                VideoNews videoNews = videoList.get(position);
+                Intent intent = new Intent(getActivity(), VideoDetailActivity.class);
+                Bundle bundle= new Bundle();
+                bundle.putString("video_url",videoNews.getVideo_url());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     private void reloadTextListView(String jsonStr) {
         Map<String, List<Object>> map = JsonUtils.parseTextNews(jsonStr);
-        if (currentPage == 1){
+        if (currentPage == 1) {
             downNewses.clear();
             list_news.removeHeaderView(headView);
             topNewses = map.get("top_news");
@@ -305,21 +326,22 @@ public class NewsListFragment extends Fragment {
                 list_news.addHeaderView(headView);
             }
         }
-        List<Object> down =  map.get("down_news");
+        List<Object> down = map.get("down_news");
         downNewses.addAll(down);
         newsListAdapter.notifyDataSetChanged();
     }
 
-    private void reloadImageListView(String jsonStr){
-        if (currentPage == 1){
+    private void reloadImageListView(String jsonStr) {
+        if (currentPage == 1) {
             imageList.clear();
         }
         List<ImageNews> imageNewses = JsonUtils.parseImageNews(jsonStr);
         imageList.addAll(imageNewses);
         imageNewsAdapter.notifyDataSetChanged();
     }
-    private void reloadVideoListView(String jsonStr){
-        if (currentPage == 1){
+
+    private void reloadVideoListView(String jsonStr) {
+        if (currentPage == 1) {
             videoList.clear();
         }
         List<VideoNews> videoNewses = JsonUtils.parseVideoNews(jsonStr);

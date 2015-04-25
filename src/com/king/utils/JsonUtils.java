@@ -1,6 +1,7 @@
 package com.king.utils;
 
 import com.king.model.*;
+import com.king.model.activity.NewsComment;
 import com.king.model.activity.TextNewsDetail;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,20 +56,23 @@ public class JsonUtils {
                 }
                 map.put("top_news", topNewses);
                 JSONArray arrDown_news = data.optJSONArray("down_news");
-                int length1 = arrDown_news.length();
-                for (int i = 0; i < length1; i++) {
-                    JSONObject objDownnews = arrDown_news.optJSONObject(i);
-                    DownNews downNews = new DownNews();
-                    downNews.setId(objDownnews.optString("id"));
-                    downNews.setCover_pic(objDownnews.optString("cover_pic"));
-                    downNews.setCreate_time(objDownnews.optString("create_time"));
-                    downNews.setContent(objDownnews.optString("content"));
-                    downNews.setDescript(objDownnews.optString("descript"));
-                    downNews.setTitle(objDownnews.optString("title"));
-                    downNews.setComment_total(objDownnews.optString("comment_total"));
-                    downNewses.add(downNews);
+                if (arrDown_news != null) {
+                    int length1 = arrDown_news.length();
+                    for (int i = 0; i < length1; i++) {
+                        JSONObject objDownnews = arrDown_news.optJSONObject(i);
+                        DownNews downNews = new DownNews();
+                        downNews.setId(objDownnews.optString("id"));
+                        downNews.setCover_pic(objDownnews.optString("cover_pic"));
+                        downNews.setCreate_time(objDownnews.optString("create_time"));
+                        downNews.setContent(objDownnews.optString("content"));
+                        downNews.setDescript(objDownnews.optString("descript"));
+                        downNews.setTitle(objDownnews.optString("title"));
+                        downNews.setComment_total(objDownnews.optString("comment_total"));
+                        downNewses.add(downNews);
+                    }
                 }
                 map.put("down_news", downNewses);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -136,31 +140,58 @@ public class JsonUtils {
         return list;
     }
 
-    public static TextNewsDetail parseTextNewsDetail(String jsonStr){
+    public static TextNewsDetail parseTextNewsDetail(String jsonStr) {
         TextNewsDetail newsDetail = new TextNewsDetail();
 
         try {
             JSONObject obj = new JSONObject(jsonStr);
             int code = obj.getInt("code");
-            if (code!=200){
+            if (code != 200) {
                 return null;
             }
-            newsDetail.setNews_id(obj.optString("news_id"));
-            newsDetail.setTitle(obj.optString("title"));
-            newsDetail.setContent(obj.optString("content"));
-            newsDetail.setCreate_time(obj.optString("content"));
-            newsDetail.setCover_pic(obj.getString("cover_pic"));
-            JSONArray pic_lists = obj.optJSONArray("pic_list");
-            int length = pic_lists.length();
-            List<String> pic_list = new ArrayList<String>();
-            for (int i = 0; i < length; i++) {
-                pic_list.add(pic_lists.optString(i));
+            JSONObject data = obj.optJSONObject("data");
+            newsDetail.setNews_id(data.optString("news_id"));
+            newsDetail.setTitle(data.optString("title"));
+            newsDetail.setContent(data.optString("content"));
+            newsDetail.setCreate_time(data.optString("create_time"));
+            newsDetail.setCover_pic(data.optString("cover_pic"));
+            JSONArray pic_lists = data.optJSONArray("pic_list");
+            if (pic_lists != null) {
+                int length = pic_lists.length();
+                List<String> pic_list = new ArrayList<String>();
+                for (int i = 0; i < length; i++) {
+                    pic_list.add(pic_lists.optString(i));
+                }
+                newsDetail.setPic_list(pic_list);
             }
-            newsDetail.setPic_list(pic_list);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return newsDetail;
+    }
+
+    public static List<NewsComment> parseNewsComment(String jsonStr) {
+        List<NewsComment> list = new ArrayList<NewsComment>();
+        try {
+            JSONObject obj = new JSONObject(jsonStr);
+            int code = obj.getInt("code");
+            if (code != 200) {
+                return null;
+            }
+            JSONArray datas = obj.optJSONArray("data");
+            int length = datas.length();
+            for (int i = 0; i < length; i++) {
+                JSONObject data = datas.optJSONObject(i);
+                NewsComment newsComment = new NewsComment();
+                newsComment.setContent(data.optString("content"));
+                newsComment.setCreate_time(data.optString("create_time"));
+                newsComment.setUser(data.optString("user"));
+                list.add(newsComment);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }

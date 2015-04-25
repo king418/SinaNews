@@ -69,9 +69,10 @@ public class VieoNewsAdapter extends BaseAdapter {
             holder = (ViewHolder) ret.getTag();
         }
 
-        holder.video_title.setText(list.get(position).getTitle());
-        holder.video_playnum.setText(list.get(position).getPlay_num()+"播放");
-        String pic_url = list.get(position).getPic();
+        VideoNews videoNews = list.get(position);
+        holder.video_title.setText(videoNews.getTitle());
+        holder.video_playnum.setText(videoNews.getPlay_num()+"播放");
+        String pic_url = videoNews.getPic();
         holder.video_img.setImageUrl(pic_url,imageLoader);
         holder.video_img.setDefaultImageResId(R.drawable.feed_focus);
         holder.video_img.setErrorImageResId(R.drawable.feed_focus);

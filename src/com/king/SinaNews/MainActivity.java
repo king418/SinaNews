@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.king.Fragment.NewsFragment;
+import com.king.Fragment.SettingsFragment;
 import com.king.app.AppContext;
 import com.king.configuration.Constants;
 import com.king.model.Title;
@@ -142,6 +143,9 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
         return Constants.NEWS_NAVIGATION + type;
     }
 
+    /**
+     * 动态加载上方导航  initListener()中调用
+     */
     private void setTitle() {
         String titleUrl = "";
         if (currentFragment < 3) {
@@ -166,6 +170,11 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
             requestQueue.add(stringRequest);
         } else {
             title_navigat.setVisibility(View.GONE);
+            SettingsFragment fragment = new SettingsFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.layout_container,fragment);
+            transaction.commit();
         }
     }
 
@@ -213,6 +222,12 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
         }
     }
 
+
+    /**
+     * 替换 fragment   setTitle()中调用
+     * @param size
+     * @param currentFragment
+     */
     private void repleaceFragment(int size, int currentFragment) {
         newsFragment = new NewsFragment();
         FragmentManager manager = getSupportFragmentManager();

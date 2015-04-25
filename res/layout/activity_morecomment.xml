@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+        >
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            >
+        <ImageView
+                android:id="@+id/img_morecomment_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/live_nav_back_1"
+                android:layout_alignParentLeft="true"
+                />
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="22sp"
+                android:text="全部评论"
+                />
+    </RelativeLayout>
+
+    <TextView
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="热门评论"
+            android:background="@drawable/title_background"
+            />
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ddd"
+            />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
+
+        <com.king.pulltorefresh.PullToRefreshListView
+                android:id="@+id/list_morecomment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+    </RelativeLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <EditText
+                android:id="@+id/et_morecomment_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="我来说两句..."
+                android:layout_weight="1"
+                />
+
+        <Button
+                android:id="@+id/btn_morecomment_submit"
+                android:padding="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发表"
+                />
+    </LinearLayout>
+</LinearLayout>
