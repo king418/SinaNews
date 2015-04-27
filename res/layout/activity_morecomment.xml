@@ -40,7 +40,7 @@
             android:background="#ddd"
             />
 
-    <RelativeLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -50,8 +50,16 @@
                 android:id="@+id/list_morecomment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:showDividers="none"
                 />
-    </RelativeLayout>
+        <TextView
+                android:id="@+id/tv_morecomment_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="暂无评论"
+                android:textColor="#aaa"
+                />
+    </LinearLayout>
 
     <LinearLayout
             android:layout_width="match_parent"

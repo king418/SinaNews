@@ -4,12 +4,14 @@
               android:layout_width="match_parent"
               android:gravity="center_vertical"
               android:layout_height="match_parent"
+              android:padding="3dp"
         >
 
     <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/item_img"
             android:layout_width="110dp"
             android:layout_height="90dp"
+            android:scaleType="fitXY"
             />
     <RelativeLayout
             android:layout_width="match_parent"

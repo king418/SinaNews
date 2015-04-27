@@ -4,6 +4,7 @@ import android.app.Application;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.king.model.UserInfo;
 import com.king.utils.MemoryCache;
 
 /**
@@ -14,6 +15,8 @@ public class AppContext extends Application {
     private static AppContext appContext;
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
+    private UserInfo userInfo;
+    private boolean isLogin;
 
     @Override
     public void onCreate() {
@@ -46,4 +49,20 @@ public class AppContext extends Application {
         }
         return imageLoader;
     }
+
+    public UserInfo getUserInfo(){
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo){
+        this.userInfo = userInfo;
+    }
+
+    public boolean isLogin(){
+        if (userInfo == null){
+            return false;
+        }
+        return true;
+    }
+
 }

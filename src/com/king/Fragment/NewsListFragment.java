@@ -63,6 +63,7 @@ public class NewsListFragment extends Fragment {
     private NewsListAdapter newsListAdapter;
     private ImageNewsAdapter imageNewsAdapter;
     private VieoNewsAdapter vieoNewsAdapter;
+    private int currentItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,7 +151,8 @@ public class NewsListFragment extends Fragment {
         for (int i = 0; i < size; i++) {
             TopNews topNews = (TopNews) list.get(i);
             String imgUrl = topNews.getCover_pic();
-            setHeadImage(imgUrl);
+            String news_id = topNews.getId();
+            setHeadImage(imgUrl,news_id);
         }
         headImg.setAdapter(new HeadPagerAdapter(imgList));
         initDots(size);
@@ -161,13 +163,22 @@ public class NewsListFragment extends Fragment {
      *
      * @param imgUrl
      */
-    private void setHeadImage(String imgUrl) {
+    private void setHeadImage(String imgUrl, final String news_id) {
         NetworkImageView imageView = new NetworkImageView(AppContext.getInstance());
         imageView.setImageUrl(imgUrl, imageLoader);
         imageView.setDefaultImageResId(R.drawable.feed_focus);
         imageView.setErrorImageResId(R.drawable.feed_focus);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TextNewsContentActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("news_id", news_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
         imgList.add(imageView);
-
     }
 
     /**
@@ -198,6 +209,7 @@ public class NewsListFragment extends Fragment {
 
                 @Override
                 public void onPageSelected(int position) {
+                    currentItem = position;
                     setCurrentDot(position);
                     setCurrentTitle(position);
                 }

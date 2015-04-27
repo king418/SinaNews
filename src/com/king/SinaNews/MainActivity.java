@@ -1,5 +1,6 @@
 package com.king.SinaNews;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -53,6 +54,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
     private RequestQueue requestQueue;
     private List<Title> title_list;
     private NewsFragment newsFragment;
+    private int currentPage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
 
         initView();
         initListener();
-
+        addListener();
     }
 
     private void initView() {
@@ -173,7 +175,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
             SettingsFragment fragment = new SettingsFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.layout_container,fragment);
+            transaction.replace(R.id.layout_container, fragment);
             transaction.commit();
         }
     }
@@ -210,6 +212,7 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
     }
 
     private void setTitleAt(int position) {
+        currentPage = position;
         scrollView.scrollTo(position * 60, 0);
         title_navigation[position].setBackgroundResource(R.drawable.title_background);
         title_navigation[position].setTextColor(Color.rgb(0xF5, 0X4B, 0X4C));
@@ -239,6 +242,32 @@ public class MainActivity extends FragmentActivity implements NewsFragment.OnVie
         newsFragment.setArguments(bundle);
         transaction.replace(R.id.layout_container, newsFragment);
         transaction.commit();
+    }
+
+    private void addListener(){
+        sliding_control.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(currentFragment){
+                    case 0:
+                        Intent intent = new Intent(MainActivity.this,UploadNewsAcitivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("current",currentFragment);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        Intent intent1 = new Intent(MainActivity.this,UploadNewsAcitivity.class);
+                        Bundle bundle1 = new Bundle();
+                        bundle1.putInt("current",currentFragment);
+                        intent1.putExtras(bundle1);
+                        startActivity(intent1);
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+        });
     }
 
 

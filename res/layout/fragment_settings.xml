@@ -27,12 +27,14 @@
                     >
 
                 <Button
+                        android:id="@+id/btn_setting_head"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/head"
                         />
 
                 <TextView
+                        android:id="@+id/tv_setting_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -58,6 +60,7 @@
                         >
 
                     <TextView
+                            android:id="@+id/tv_setting_collect"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableTop="@drawable/user_collection"
@@ -83,6 +86,7 @@
                         >
 
                     <TextView
+                            android:id="@+id/tv_setting_comment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableTop="@drawable/user_comment"
@@ -128,6 +132,7 @@
 
 
             <LinearLayout
+                    android:id="@+id/ll_container_admin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -188,6 +193,7 @@
                     />
 
             <LinearLayout
+                    android:id="@+id/ll_container_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -217,6 +223,7 @@
                     />
 
             <LinearLayout
+                    android:id="@+id/ll_container_clear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -327,6 +334,7 @@
                     android:gravity="center"
                     >
                 <Button
+                        android:id="@+id/btn_setting_logoff"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="#777"

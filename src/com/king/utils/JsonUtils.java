@@ -194,4 +194,75 @@ public class JsonUtils {
         return list;
     }
 
+    public static UserInfo parseUser(String jsonStr){
+        UserInfo userInfo = new UserInfo();
+        try {
+            JSONObject obj = new JSONObject(jsonStr);
+            int code = obj.getInt("code");
+            if (code != 200) {
+                return null;
+            }
+            JSONObject data = obj.optJSONObject("data");
+            userInfo.setAddress(data.optString("address"));
+            userInfo.setBirthday(data.optString("birthday"));
+            userInfo.setClient_type(data.optString("client_type"));
+            userInfo.setCreate_time(data.optString("create_time"));
+            userInfo.setDevice_modle(data.optString("device_model"));
+            userInfo.setDevice_token(data.optString("device_token"));
+            userInfo.setHeader_img(data.optString("header_img"));
+            userInfo.setId(data.optString("id"));
+            userInfo.setIp(data.optString("ip"));
+            userInfo.setJid(data.optString("jid"));
+            userInfo.setLast_login_time(data.optString("last_login_time"));
+            userInfo.setLbs_lat(data.optString("lbs_lat"));
+            userInfo.setLbs_long(data.optString("lbs_long"));
+            userInfo.setNickname(data.optString("nickname"));
+            userInfo.setOs_version(data.optString("os_version"));
+            userInfo.setSex(data.optString("sex"));
+            userInfo.setStatus(data.optString("status"));
+            userInfo.setToken(data.optString("token"));
+            userInfo.setUsername(data.optString("username"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return userInfo;
+    }
+
+    public static String parseMessage(String jsonStr){
+        String message = null;
+        try {
+            JSONObject obj = new JSONObject(jsonStr);
+            message = obj.optString("message");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+
+    public static List<MyComment> parseMyComment(String jsonStr){
+        List<MyComment> list = new ArrayList<MyComment>();
+
+        try {
+            JSONObject obj = new JSONObject(jsonStr);
+            int code = obj.optInt("code");
+            if (code!=200){
+                return null;
+            }
+            JSONArray datas = obj.optJSONArray("data");
+            int length = datas.length();
+            for (int i = 0; i < length; i++) {
+                JSONObject data = datas.optJSONObject(i);
+                MyComment myComment = new MyComment();
+                myComment.setCreate_time(data.optString("create_time"));
+                myComment.setTitle(data.optString("title"));
+                myComment.setContent(data.optString("content"));
+                list.add(myComment);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
